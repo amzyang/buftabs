@@ -266,10 +266,8 @@ options.add(["buftabs", "bt"],
 
 /// Attach to events in order to update the tabline
 let tabContainer = config.tabbrowser.mTabContainer;
-for (let event in values(["TabMove", "TabOpen", "TabClose"])) {
-    events.listen(tabContainer, event, buftabs.update, false);
+for (let event in values(["TabMove", "TabOpen", "TabClose"]))
     events.listen(tabContainer, event, function () { dactyl.timeout(buftabs.update, 1000); }, false);
-}
 events.listen(tabContainer, "TabSelect", buftabs.update, false);
 
 document.getElementById("appcontent").addEventListener("load", function (event) {
