@@ -60,6 +60,7 @@ var INFO =
 </plugin>;
 // }}}
 
+// 高亮C-^>将要切换的tab
 let buftabs = {
     // Update the tabs
     update: function ()
@@ -98,6 +99,7 @@ let buftabs = {
             // Create label
             let browser = tab.linkedBrowser;
             let label = btabs.childNodes[i];
+            let tabnumber = tabs.index(tab, false) + 1;
 
             // Hook on load
             if (browser.webProgress.isLoadingDocument)
@@ -105,13 +107,13 @@ let buftabs = {
                 browser._buftabs_label = label;
                 browser.contentDocument.addEventListener("load", function ()
                 {
-                    buftabs.fillLabel(this._buftabs_label, this);
+                    buftabs.fillLabel(this._buftabs_label, this, tabnumber);
                 }, false);
             }
 
             // Fill label
             label.tabpos = i;
-            buftabs.fillLabel(label, browser);
+            buftabs.fillLabel(label, browser, tabnumber);
 
             if (tabs.index(null, true) == label.tabpos)
             {
@@ -131,7 +133,7 @@ let buftabs = {
     },
 
     // Fill a label with browser content
-    fillLabel: function(label, browser)
+    fillLabel: function(label, browser, i)
     {
         var maxlength = options.get("buftabs-maxlength").value;
         var showicons = options.get("buftabs-showicons").value;
@@ -156,7 +158,7 @@ let buftabs = {
             tabvalue += "\u2764";
 
         // Brackets and index
-        tabvalue = "["+(label.tabpos+1)+"-"+tabvalue+"]";
+        tabvalue = "["+(i)+"-"+tabvalue+"]";
 
         label.setAttribute("value", tabvalue);
         if (showicons==true)
@@ -246,7 +248,7 @@ options.add(["buftabs-completer", "btc"],
             }
         });
 
-let initial_done = true;
+initial_done = true;
 options.add(["buftabs", "bt"],
         "Control whether to use buftabs in the statusline",
         "boolean", true, 
