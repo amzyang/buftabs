@@ -1,4 +1,6 @@
-// {{{ Information
+"use strict";
+XML.ignoreWhitespace = false;
+XML.prettyPrinting = false;
 var INFO =
 <plugin name="buftabs" version="1.0"
     href="http://git.glacicle.org/vimperator-buftabs/"
@@ -58,9 +60,7 @@ var INFO =
         </description>
     </item>
 </plugin>;
-// }}}
 
-// 高亮C-^>将要切换的tab
 let buftabs = {
     // Update the tabs
     update: function ()
@@ -89,7 +89,7 @@ let buftabs = {
                 if (ev.button == 0)
                     tabs.select(this.tabpos);
                 else if (ev.button == 1)
-                    tabs.remove(tabs.getTab(this.tabpos), 1, false, 0);
+                    tabs.remove(tabs.getTab(this.tabindex), 1, false);
             }, false);
         }
 
@@ -99,7 +99,6 @@ let buftabs = {
             // Create label
             let browser = tab.linkedBrowser;
             let label = btabs.childNodes[i];
-            let tabnumber = tabs.index(tab, false) + 1;
 
             // Hook on load
             if (browser.webProgress.isLoadingDocument)
@@ -107,13 +106,15 @@ let buftabs = {
                 browser._buftabs_label = label;
                 browser.contentDocument.addEventListener("load", function ()
                 {
-                    buftabs.fillLabel(this._buftabs_label, this, tabnumber);
+                    buftabs.fillLabel(this._buftabs_label, this);
                 }, false);
             }
 
             // Fill label
             label.tabpos = i;
-            buftabs.fillLabel(label, browser, tabnumber);
+            label.tabindex = tabs.index(tab, false);
+
+            buftabs.fillLabel(label, browser);
 
             if (tabs.index(null, true) == label.tabpos)
             {
@@ -133,7 +134,7 @@ let buftabs = {
     },
 
     // Fill a label with browser content
-    fillLabel: function(label, browser, i)
+    fillLabel: function(label, browser)
     {
         var maxlength = options.get("buftabs-maxlength").value;
         var showicons = options.get("buftabs-showicons").value;
@@ -158,7 +159,7 @@ let buftabs = {
             tabvalue += "\u2764";
 
         // Brackets and index
-        tabvalue = "["+(i)+"-"+tabvalue+"]";
+        tabvalue = "["+(label.tabindex + 1)+"-"+tabvalue+"]";
 
         label.setAttribute("value", tabvalue);
         if (showicons==true)
@@ -263,14 +264,13 @@ options.add(["buftabs", "bt"],
             }
         });
 
-
 /// Attach to events in order to update the tabline
-var tabContainer = window.getBrowser().mTabContainer;
-["TabMove", "TabOpen", "TabClose", "TabSelect"].forEach(function (event) {
-    tabContainer.addEventListener(event, function (event) {
-        buftabs.update();
-    }, false);
-});
+let tabContainer = config.tabbrowser.mTabContainer;
+for (let event in values(["TabMove", "TabOpen", "TabClose"])) {
+    events.listen(tabContainer, event, buftabs.update, false);
+    events.listen(tabContainer, event, function () { dactyl.timeout(buftabs.update, 1000); }, false);
+}
+events.listen(tabContainer, "TabSelect", buftabs.update, false);
 
 document.getElementById("appcontent").addEventListener("load", function (event) {
     buftabs.update();
