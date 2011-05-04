@@ -2,7 +2,7 @@
 XML.ignoreWhitespace = false;
 XML.prettyPrinting = false;
 var INFO =
-<plugin name="buftabs" version="1.10"
+<plugin name="buftabs" version="1.1.0"
     href="https://github.com/grassofhust/buftabs"
     summary="Buftabs: show the tabbar in the statusline"
     xmlns={NS}>
