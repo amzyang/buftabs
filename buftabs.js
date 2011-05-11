@@ -112,7 +112,7 @@ var INFO =
     <p><em>Buftabs does not support firefox 3.6.</em></p>
 </plugin>;
 
-var buftabs = {
+let buftabs = {
     id : 'dactyl-statusline-field-buftabs',
     fullLoad: false,
     init : function () {
@@ -346,7 +346,7 @@ var buftabs = {
                         gBrowser.selectTabAtIndex(this.tabpos);
                     else if (ev.button == 1) {
                         if (gBrowser.visibleTabs[this.tabpos + 1])
-                            gBrowser.tabContainer.selectedItem = gBrowser.visibleTabs[this.tabpos + 1];
+                            gBrowser.tabContainer.selectedItem = gBrowser.visibleTabs[this.tabpos + 1]; // conflict with tab-option.js?
                         gBrowser.removeTab(gBrowser.tabContainer.getItemAtIndex(this.tabindex));
                     }
             }, false);
