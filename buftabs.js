@@ -521,7 +521,7 @@ function unregisterMyListener() {
     gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
     window.removeEventListener("fullscreen", buftabs.update, false);
 }
-window.addEventListener("load", buftabs.init, false);
+buftabs.init();
 window.addEventListener('unload', buftabs.destory, false);
 
 // Options
