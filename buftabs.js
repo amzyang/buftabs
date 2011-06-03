@@ -23,10 +23,6 @@ var INFO =
     </p>
 
     <p>
-        You can set the max length of a title before it is cut off with
-        the <o>buftabs-maxlength</o> option. It is set to 13 by default.
-    </p>
-    <p>
         Thanks Lucas de Vries and other folks on vimperator/dactyl. This plugins was initial developed by Lucas de Vries.
     </p>
     <item>
@@ -50,15 +46,6 @@ var INFO =
         <description>Toggle progressbar on or off.</description>
     </item>
     <item>
-        <tags>'btm' 'buftabs-maxlength'</tags>
-        <spec>'buftabs-maxlength' 'btm'</spec>
-        <type>number</type> <default>13</default>
-        <description>
-            The maximum length in characters of a single entry in the buftabs line.
-            Set to 0 for unlimited.
-        </description>
-    </item>
-    <item>
         <tags>'bte' 'buftabs-elem'</tags>
         <spec>'buftabs-elem' 'bte'</spec>
         <type>charlist</type> <default>"nthb"</default>
@@ -73,15 +60,6 @@ var INFO =
             <dt>h</dt>      <dd>Forward/Backward indicator</dd>
             <dt>b</dt>      <dd>Heart indicator</dd>
         </dl>
-        </description>
-    </item>
-    <item>
-        <tags>'bts' 'buftabs-morestring'</tags>
-        <spec>'buftabs-morestring' 'bts'</spec>
-        <type>number</type> <default>"..."</default>
-        <description>
-            Trailing string when title longer than maxlength.
-            Set to empty string for no trailing string.
         </description>
     </item>
     <item>
@@ -102,14 +80,14 @@ var INFO =
     </dl>
 
     <p>Recommend Settings:</p>
-    <ul>
-        <li>hi -a BufTabSelected                            background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; color:#FFF; background-color:#000; padding:0 4px; font-weight:normal;border-radius:2px;</li>
-        <li>hi -a BufTabAlternate                           background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;</li>
-        <li>hi -a BufTab                                    background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;</li>
-        <li>hi -a BufTab:hover                              color:#2e3330;background-color: #88b090; border-radius:2px;</li>
-        <li>hi -a BufTabAlternate:hover                     color:#2e3330;background-color: #88b090; border-radius:2px;</li>
-    </ul>
-    <p><em>Buftabs does not support firefox 3.6.</em></p>
+    <code>
+        hi -a BufTabSelected                            background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; color:#FFF; background-color:#000; padding:0 4px; font-weight:normal;border-radius:2px;
+        hi -a BufTabAlternate                           background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;
+        hi -a BufTab                                    background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;
+        hi -a BufTab:hover                              color:#2e3330;background-color: #88b090; border-radius:2px;
+        hi -a BufTabAlternate:hover                     color:#2e3330;background-color: #88b090; border-radius:2px;
+    </code>
+    <Warning>Buftabs does not support firefox 3.6.</Warning>
 </plugin>;
 
 let buftabs = {
@@ -153,12 +131,10 @@ let buftabs = {
         unregisterMyListener();
     },
 
-    get options() buftabs._options || {'maxlength':13, 'elem':'nthb', 'morestring':UTF8('...'), 'buftabs': true, 'rnu': false, 'progress': true},
+    get options() buftabs._options || {'elem':'nthb', 'buftabs': true, 'rnu': false, 'progress': true},
     set options(options) {
         buftabs._options = {
-            'maxlength': 'maxlength' in options ? options['maxlength'] : buftabs.options['maxlength'],
             'elem' : 'elem' in options ? options['elem'] : buftabs.options['elem'],
-            'morestring': 'morestring' in options ? options['morestring'] : buftabs.options['morestring'],
             'buftabs': 'buftabs' in options ? options['buftabs'] : buftabs.options['buftabs'],
             'rnu': 'rnu' in options ? options['rnu'] : buftabs.options['rnu'],
             'progress': 'progress' in options ? options['progress'] : buftabs.options['progress']
@@ -342,6 +318,7 @@ let buftabs = {
 
         while (btabs.childNodes.length < visibleTabs_length) {
             let label = document.createElement("label");
+            label.setAttribute("crop", "end");
             btabs.appendChild(label);
             label.addEventListener("mouseover", function(ev) {
                 buftabs.updateLabelTooltip(this, this.tabindex);
@@ -430,7 +407,7 @@ let buftabs = {
             let tab = aEvent.target;
             let labelindex = tabs.index(tab, true);
             buftabs.fillLabel(labelindex, tab);
-            dactyl.timeout(buftabs.layout, 500);
+            dactyl.timeout(buftabs.layout, 400);
         }
     },
 
@@ -439,40 +416,38 @@ let buftabs = {
         let label = buftabs.Olabel(arglabel);
         let tab = buftabs.Otab(argtab);
         let browser = tab.linkedBrowser;
-        let maxlength = parseInt(buftabs.options['maxlength']);
-        let morestring = buftabs.options['morestring'];
         let tabvalue = "";
 
         // Get title
         if (buftabs.options['elem'].indexOf('t') >= 0)
             tabvalue += tab.label;
 
-        // Check length
-        if (maxlength > 0 && tabvalue.length > maxlength)
-            tabvalue = buftabs.mb_substr(tabvalue, maxlength - morestring.length) + morestring;
-
+        let indicate = "";
         // Get history
         if (buftabs.options['elem'].indexOf('h') >= 0)
-            tabvalue += buftabs.Onavigation(tab);
+            indicate = buftabs.Onavigation(tab);
+            // tabvalue += buftabs.Onavigation(tab); // todo, use tab directly
 
         // Bookmark icon
         if (buftabs.options['elem'].indexOf('b') >= 0 && bookmarkcache.isBookmarked(browser.contentDocument.location.href))
-            tabvalue += UTF8("❤");
+            indicate += UTF8("❤");
 
         // Brackets and index
         if (buftabs.options['elem'].indexOf('n') >= 0) {
             if (buftabs.options['rnu']) {
-                if (tabvalue.length > 0)
-                    tabvalue = (label.tabpos + 1)+"-"+tabvalue;
+                if (indicate.length > 0)
+                    indicate = "[" + (label.tabpos + 1) + " " + indicate + "]";
                 else
-                    tabvalue = label.tabpos + 1;
+                    indicate = "[" + (label.tabpos + 1) + "]";
             } else {
-                if (tabvalue.length > 0)
-                    tabvalue = (label.tabindex + 1)+"-"+tabvalue;
+                if (indicate.length > 0)
+                    indicate = "[" + (label.tabindex + 1) + " " + indicate + "]";
                 else
-                    tabvalue = label.tabindex + 1;
+                    indicate = "[" + (label.tabindex + 1) + "]";
             }
         }
+
+        tabvalue = indicate + " " + tabvalue;
 
         label.setAttribute("value", tabvalue);
         // tabbrowser getIcon
@@ -567,28 +542,6 @@ options.add(["buftabs-elem", "bte"],
             }
         });
 
-options.add(["buftabs-maxlength", "btm"],
-        "Control the title length",
-        "number",
-        13,
-        {
-            setter : function (value) {
-                buftabs.options = {'maxlength' : value};
-                return value;
-            }
-        });
-
-options.add(["buftabs-morestring", "bts"],
-        "Indicated the overflow",
-        "string",
-        UTF8('...'),
-        {
-            setter : function (value) {
-                buftabs.options = {'morestring' : value};
-                return value;
-            }
-        });
-
 options.add(["buftabs", "bt"],
         "Control whether to use buftabs in the statusline",
         "boolean",
@@ -613,8 +566,8 @@ group.commands.add(["buf[tabs]", "bt"],
 // Initialise highlight groups
 highlight.loadCSS(<![CDATA[
     !BufTabs                 color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;
-    !BufTab                  margin:0 !important; padding:0 !important;
-    !BufTabAlternate         margin:0 !important; padding:0 !important;
-    !BufTabSelected          margin:0 !important; padding:0 !important;
+    !BufTab                  margin:0; padding:0; max-width:120px;
+    !BufTabAlternate         margin:0; padding:0; max-width:120px;
+    !BufTabSelected          margin:0; padding:0; max-width:120px;
 ]]>);
 
