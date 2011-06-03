@@ -447,7 +447,7 @@ let buftabs = {
             }
         }
 
-        tabvalue = indicate + " " + tabvalue;
+        tabvalue = indicate + tabvalue;
 
         label.setAttribute("value", tabvalue);
         // tabbrowser getIcon
