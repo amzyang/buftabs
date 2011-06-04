@@ -272,8 +272,20 @@ let buftabs = {
         }
 
         // Show the entire line if possible
-        if (buftabs.btabs.scrollWidth == buftabs.btabs.clientWidth)
+        if (buftabs.btabs.scrollWidth <= buftabs.btabs.clientWidth)
             buftabs.btabs.scrollLeft = 0;
+        else {
+            // check last label position
+            let sum = 0;
+            let labels = Array.slice(buftabs.blabels);
+            labels.forEach(function (label) {
+                sum += label.scrollWidth;
+            });
+            if (last_position['right'] < buftabs.btabs.clientWidth)
+                // This doesn't work, why?
+                // buftabs.btabs.scrollLeft = buftabs.btabs.scrollWidth - buftabs.btabs.clientWidth;
+                buftabs.btabs.scrollLeft = sum - buftabs.btabs.clientWidth;
+        }
 
     },
 
@@ -335,7 +347,7 @@ let buftabs = {
         }
     },
     // Update the tabs
-    update : function () {
+    update: function () {
         if (!buftabs.options["buftabs"])
             return;
 
@@ -484,7 +496,7 @@ function registerMyListener() {
     gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
-    window.addEventListener("fullscreen", buftabs.update, false);
+    window.addEventListener("fullscreen", buftabs.layout, false);
 }
 
 function unregisterMyListener() {
@@ -494,7 +506,7 @@ function unregisterMyListener() {
     gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
-    window.removeEventListener("fullscreen", buftabs.update, false);
+    window.removeEventListener("fullscreen", buftabs.layout, false);
 }
 buftabs.init();
 window.addEventListener('unload', buftabs.destory, false);
