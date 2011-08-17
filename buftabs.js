@@ -496,7 +496,7 @@ function registerMyListener() {
     gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
-    window.addEventListener("fullscreen", buftabs.layout, false);
+    window.addEventListener("FullScreen", buftabs.layout, false);
 }
 
 function unregisterMyListener() {
@@ -506,13 +506,13 @@ function unregisterMyListener() {
     gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
-    window.removeEventListener("fullscreen", buftabs.layout, false);
+    window.removeEventListener("FullScreen", buftabs.layout, false);
 }
 buftabs.init();
 window.addEventListener('unload', buftabs.destory, false);
 
 // Options
-options.add(["buftabs-progress", "btp"],
+group.options.add(["buftabs-progress", "btp"],
     "Show progress",
     "boolean",
     true,
@@ -524,7 +524,7 @@ options.add(["buftabs-progress", "btp"],
     }
 );
 
-options.add(["buftabs-rnu", "btr"],
+group.options.add(["buftabs-rnu", "btr"],
     "Show Relative tabnumber",
     "boolean",
     false,
@@ -536,7 +536,7 @@ options.add(["buftabs-rnu", "btr"],
     }
 );
 
-options.add(["buftabs-elem", "bte"],
+group.options.add(["buftabs-elem", "bte"],
         "Show or hide certain elemments",
         "charlist",
         "nthb",
@@ -554,7 +554,7 @@ options.add(["buftabs-elem", "bte"],
             }
         });
 
-options.add(["buftabs", "bt"],
+group.options.add(["buftabs", "bt"],
         "Control whether to use buftabs in the statusline",
         "boolean",
         true,
@@ -572,7 +572,8 @@ group.commands.add(["buf[tabs]", "bt"],
 	buftabs.setup,
 	{
 		argCount: 0
-	}
+    },
+    true
 );
 
 // Initialise highlight groups
