@@ -330,7 +330,7 @@ let buftabs = {
 
         while (btabs.childNodes.length < visibleTabs_length) {
             let label = document.createElement("label");
-            label.setAttribute("crop", "end");
+            label.setAttribute("crop", "end"); // text-overflow, works for firefox 7
             btabs.appendChild(label);
             label.addEventListener("mouseover", function(ev) {
                 buftabs.updateLabelTooltip(this, this.tabindex);
