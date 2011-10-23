@@ -98,9 +98,9 @@ let buftabs = {
             if (document.getElementById(buftabs.id))
                 commandline.widgets.updateVisibility();
             else {
-                let widget = util.xmlToDom(
-                    <hbox xmlns={XUL} highlight="BufTabs" id={buftabs.id} flex="1" valign="middle"/>,
-                    document);
+				let widget = util.xmlToDom(
+					<hbox xmlns={XUL} highlight="BufTabs" id={buftabs.id} flex="1"/>,
+					document);
                 statusline.widgets.url.parentNode.insertBefore(widget, statusline.widgets.url.nextSibling);
                 commandline.widgets.addElement({
                         name: "buftabs",
@@ -578,9 +578,11 @@ group.commands.add(["buf[tabs]", "bt"],
 
 // Initialise highlight groups
 highlight.loadCSS(<![CDATA[
-    !BufTabs                 color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;
-    !BufTab                  margin:0; padding:0; max-width:120px;
-    !BufTabAlternate         margin:0; padding:0; max-width:120px;
-    !BufTabSelected          margin:0; padding:0; max-width:120px;
+	!BufTabs                                   {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}
+	!BufTabSelected                            {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; color:#000; background-color:#fff; margin:0 1px !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;max-width:120px;}
+	!BufTabAlternate                           {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; margin:0 1px !important; cursor:pointer !important;max-width:120px;}
+	!BufTab                                    {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; margin:0 1px !important; cursor:pointer !important;max-width:120px;}
+	!BufTab:hover                              {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;}
+	!BufTabAlternate:hover                     {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;}
 ]]>);
 
