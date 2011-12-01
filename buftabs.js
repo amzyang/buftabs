@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 XML.ignoreWhitespace = false;
 XML.prettyPrinting = false;
 var INFO =
