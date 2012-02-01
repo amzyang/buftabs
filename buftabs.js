@@ -220,8 +220,8 @@ let buftabs = {
         let image = tab.image;
         if (tab.linkedBrowser.webProgress.isLoadingDocument)
             image = "chrome://browser/skin/tabbrowser/connecting.png";
-        if (image == "")
-            image = DEFAULT_FAVICON;
+        else if (image == "")
+            image = BookmarkCache.DEFAULT_FAVICON;
 
         label.style.paddingLeft="21px";
         label.style.backgroundImage='url("'+image+'")';
