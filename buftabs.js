@@ -36,7 +36,7 @@ var INFO =
     <item>
         <tags>'btr' 'buftabs-rnu'</tags>
         <spec>'buftabs-rnu' 'btr'</spec>
-        <type>boolean</type> <default>false</default>
+        <type>boolean</type> <default>true</default>
         <description>Relative tabnumber.</description>
     </item>
     <item>
@@ -131,7 +131,7 @@ let buftabs = {
         unregisterMyListener();
     },
 
-    get options() buftabs._options || {'elem':'nthb', 'buftabs': true, 'rnu': false, 'progress': true},
+    get options() buftabs._options || {'elem':'nthb', 'buftabs': true, 'rnu': true, 'progress': true},
     set options(options) {
         buftabs._options = {
             'elem' : 'elem' in options ? options['elem'] : buftabs.options['elem'],
@@ -527,7 +527,7 @@ group.options.add(["buftabs-progress", "btp"],
 group.options.add(["buftabs-rnu", "btr"],
     "Show Relative tabnumber",
     "boolean",
-    false,
+    true,
     {
         setter: function (value) {
             buftabs.options = {'rnu': value};
