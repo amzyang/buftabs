@@ -423,6 +423,24 @@ let buftabs = {
         }
     },
 
+    updateTabPinned: function(aEvent) {
+        if (!aEvent.target.hidden) {
+            let tab = aEvent.target;
+            let labelindex = tabs.index(tab, true);
+            buftabs.fillLabel(labelindex, tab);
+            dactyl.timeout(buftabs.layout, 400);
+        }
+    },
+
+    updateTabUnpinned: function(aEvent) {
+        if (!aEvent.target.hidden) {
+            let tab = aEvent.target;
+            let labelindex = tabs.index(tab, true);
+            buftabs.fillLabel(labelindex, tab);
+            dactyl.timeout(buftabs.layout, 400);
+        }
+    },
+
     // fill a label
     fillLabel: function(arglabel, argtab) {
         let label = buftabs.Olabel(arglabel);
@@ -430,43 +448,55 @@ let buftabs = {
         let browser = tab.linkedBrowser;
         let tabvalue = "";
 
-        // Get title
-        if (buftabs.options['elem'].indexOf('t') >= 0)
-            tabvalue += tab.label;
+        if (tab.pinned) {
+            buftabs.setFavicon(label, tab);
+            // tab index
+            if (buftabs.options['elem'].indexOf('n') >= 0) {
+                let index = label.tabpos + 1;
+                if (buftabs.options['rnu'])
+                    index = label.tabindex + 1;
+                label.setAttribute("value", index);
+            }
 
-        let indicate = "";
-        // Get history
-        if (buftabs.options['elem'].indexOf('h') >= 0)
-            indicate = buftabs.Onavigation(tab);
+        } else {
+            // Get title
+            if (buftabs.options['elem'].indexOf('t') >= 0)
+                tabvalue += tab.label;
+
+            let indicate = "";
+            // Get history
+            if (buftabs.options['elem'].indexOf('h') >= 0)
+                indicate = buftabs.Onavigation(tab);
             // tabvalue += buftabs.Onavigation(tab); // todo, use tab directly
 
-        // Bookmark icon
-        if (buftabs.options['elem'].indexOf('b') >= 0 && bookmarkcache.isBookmarked(browser.contentDocument.location.href))
-            indicate += UTF8("❤");
+            // Bookmark icon
+            if (buftabs.options['elem'].indexOf('b') >= 0 && bookmarkcache.isBookmarked(browser.contentDocument.location.href))
+                indicate += UTF8("❤");
 
-        // Brackets and index
-        if (buftabs.options['elem'].indexOf('n') >= 0) {
-            if (buftabs.options['rnu']) {
-                if (indicate.length > 0)
-                    indicate = "[" + (label.tabpos + 1) + " " + indicate + "]";
-                else
-                    indicate = "[" + (label.tabpos + 1) + "]";
-            } else {
-                if (indicate.length > 0)
-                    indicate = "[" + (label.tabindex + 1) + " " + indicate + "]";
-                else
-                    indicate = "[" + (label.tabindex + 1) + "]";
+            // Brackets and index
+            if (buftabs.options['elem'].indexOf('n') >= 0) {
+                if (buftabs.options['rnu']) {
+                    if (indicate.length > 0)
+                        indicate = "[" + (label.tabpos + 1) + " " + indicate + "]";
+                    else
+                        indicate = "[" + (label.tabpos + 1) + "]";
+                } else {
+                    if (indicate.length > 0)
+                        indicate = "[" + (label.tabindex + 1) + " " + indicate + "]";
+                    else
+                        indicate = "[" + (label.tabindex + 1) + "]";
+                }
             }
+
+            tabvalue = indicate + tabvalue;
+
+            label.setAttribute("value", tabvalue);
+            // tabbrowser getIcon
+            if (buftabs.options['elem'].indexOf('i') >= 0)
+                buftabs.setFavicon(label, tab);
+            else
+                buftabs.removeFavicon(label);
         }
-
-        tabvalue = indicate + tabvalue;
-
-        label.setAttribute("value", tabvalue);
-        // tabbrowser getIcon
-        if (buftabs.options['elem'].indexOf('i') >= 0)
-            buftabs.setFavicon(label, tab);
-        else
-            buftabs.removeFavicon(label);
 
         // Set the correct highlight group
         if (tabs.index(null, true) == label.tabpos)
@@ -496,6 +526,8 @@ function registerMyListener() {
     gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
+    gBrowser.tabContainer.addEventListener("TabPinned", buftabs.updateTabPinned, false);
+    gBrowser.tabContainer.addEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
     window.addEventListener("FullScreen", buftabs.layout, false);
 }
 
@@ -506,6 +538,8 @@ function unregisterMyListener() {
     gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
     gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
     gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
+    gBrowser.tabContainer.removeEventListener("TabPinned", buftabs.updateTabPinned, false);
+    gBrowser.tabContainer.removeEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
     window.removeEventListener("FullScreen", buftabs.layout, false);
 }
 buftabs.init();
