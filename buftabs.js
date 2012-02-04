@@ -449,16 +449,17 @@ let buftabs = {
         let tabvalue = "";
 
         if (tab.pinned) {
+            label.setAttribute("pinned", "true");
             buftabs.setFavicon(label, tab);
             // tab index
             if (buftabs.options['elem'].indexOf('n') >= 0) {
                 let index = label.tabpos + 1;
                 if (buftabs.options['rnu'])
                     index = label.tabindex + 1;
-                label.setAttribute("value", index);
+                label.setAttribute("value", "[" + index + "]");
             }
-
         } else {
+            label.setAttribute("pinned", "false");
             // Get title
             if (buftabs.options['elem'].indexOf('t') >= 0)
                 tabvalue += tab.label;
