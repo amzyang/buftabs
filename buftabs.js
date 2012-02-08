@@ -529,7 +529,7 @@ function registerMyListener() {
     gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
     gBrowser.tabContainer.addEventListener("TabPinned", buftabs.updateTabPinned, false);
     gBrowser.tabContainer.addEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
-    window.addEventListener("FullScreen", buftabs.layout, false);
+    window.addEventListener("fullscreen", buftabs.layout, false);
 }
 
 function unregisterMyListener() {
@@ -541,7 +541,7 @@ function unregisterMyListener() {
     gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
     gBrowser.tabContainer.removeEventListener("TabPinned", buftabs.updateTabPinned, false);
     gBrowser.tabContainer.removeEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
-    window.removeEventListener("FullScreen", buftabs.layout, false);
+    window.removeEventListener("fullscreen", buftabs.layout, false);
 }
 buftabs.init();
 window.addEventListener('unload', buftabs.destory, false);
