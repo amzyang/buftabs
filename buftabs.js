@@ -124,7 +124,7 @@ let buftabs = {
 
     setup: function() {
         buftabs.fullLoad = true;
-        dactyl.execute('set buftabs!');
+        ex.set('buftabs!');
     },
 
     destory: function() {
