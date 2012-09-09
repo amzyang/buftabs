@@ -109,7 +109,7 @@ let buftabs = {
                         noValue: true
                 });
                 commandline.widgets.statusbar.buftabs.addEventListener("DOMMouseScroll", function(event) {
-                        gBrowser.tabContainer.advanceSelectedTab(event.detail < 0 ? -1 : 1, true);
+                        window.gBrowser.tabContainer.advanceSelectedTab(event.detail < 0 ? -1 : 1, true);
                         event.stopPropagation();
                     }, true);
 
@@ -156,7 +156,7 @@ let buftabs = {
     Otab : function (arg) {
         if (typeof arg == 'object')
             return arg;
-        return gBrowser.tabs[arg];
+        return window.gBrowser.tabs[arg];
     },
 
     mb_strlen: function (str) {
@@ -181,7 +181,7 @@ let buftabs = {
     Obrowser: function(arg) {
         if (typeof arg == 'object') // a label obj
             return arg;
-        return gBrowser.getBrowserAtIndex(arg);
+        return window.gBrowser.getBrowserAtIndex(arg);
     },
     Olabel: function (arg) {
         if (typeof arg == 'object')
@@ -322,7 +322,7 @@ let buftabs = {
     buildLabels: function () {
         // Get buftabbar
         let btabs = buftabs.btabs;
-        let visibleTabs_length = gBrowser.visibleTabs.length;
+        let visibleTabs_length = window.gBrowser.visibleTabs.length;
 
         // Make sure we have an appropriate amount of labels
         while (btabs.childNodes.length > visibleTabs_length)
@@ -337,11 +337,11 @@ let buftabs = {
             }, false);
             label.addEventListener("click", function (ev) {
                     if (ev.button == 0)
-                        gBrowser.selectTabAtIndex(this.tabpos);
+                        window.gBrowser.selectTabAtIndex(this.tabpos);
                     else if (ev.button == 1) {
-                        if (gBrowser.visibleTabs[this.tabpos + 1])
-                            gBrowser.tabContainer.selectedItem = gBrowser.visibleTabs[this.tabpos + 1]; // conflict with tab-option.js?
-                        gBrowser.removeTab(gBrowser.tabContainer.getItemAtIndex(this.tabindex));
+                        if (window.gBrowser.visibleTabs[this.tabpos + 1])
+                            window.gBrowser.tabContainer.selectedItem = window.gBrowser.visibleTabs[this.tabpos + 1]; // conflict with tab-option.js?
+                        window.gBrowser.removeTab(window.gBrowser.tabContainer.getItemAtIndex(this.tabindex));
                     }
             }, false);
         }
@@ -353,7 +353,7 @@ let buftabs = {
 
         buftabs.buildLabels();
 
-        let visibleTabs = gBrowser.visibleTabs;
+        let visibleTabs = window.gBrowser.visibleTabs;
         // Create the new tabs
         for (let [i, tab] in iter(visibleTabs)) {
             // Create label
@@ -361,7 +361,7 @@ let buftabs = {
 
             // Fill label
             label.tabpos = i;
-            label.tabindex = gBrowser.tabContainer.getIndexOfItem(tab);
+            label.tabindex = window.gBrowser.tabContainer.getIndexOfItem(tab);
 
             buftabs.fillLabel(label, tab);
         }
@@ -393,8 +393,8 @@ let buftabs = {
 
         buftabs.buildLabels();
 
-        let visibleTabs = gBrowser.visibleTabs;
-        let closed_labelIndex = gBrowser.tabContainer.getIndexOfItem(aEvent.target);
+        let visibleTabs = window.gBrowser.visibleTabs;
+        let closed_labelIndex = window.gBrowser.tabContainer.getIndexOfItem(aEvent.target);
         // Create the new tabs
         for (let [i, tab] in iter(visibleTabs)) {
             // Create label
@@ -402,7 +402,7 @@ let buftabs = {
 
             // Fill label
             label.tabpos = i;
-            label.tabindex = gBrowser.tabContainer.getIndexOfItem(tab);
+            label.tabindex = window.gBrowser.tabContainer.getIndexOfItem(tab);
             if (label.tabindex > closed_labelIndex) // dirty hack, I don't know why
                 label.tabindex = label.tabindex - 1;
 
@@ -521,26 +521,26 @@ let buftabs = {
 };
 
 function registerMyListener() {
-    gBrowser.tabContainer.addEventListener("TabOpen", buftabs.updateTabOpen, false);
-    gBrowser.tabContainer.addEventListener("TabHide", buftabs.updateTabHide, false);
-    gBrowser.tabContainer.addEventListener("TabMove", buftabs.updateTabMove, false);
-    gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
-    gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
-    gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
-    gBrowser.tabContainer.addEventListener("TabPinned", buftabs.updateTabPinned, false);
-    gBrowser.tabContainer.addEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
+    window.gBrowser.tabContainer.addEventListener("TabOpen", buftabs.updateTabOpen, false);
+    window.gBrowser.tabContainer.addEventListener("TabHide", buftabs.updateTabHide, false);
+    window.gBrowser.tabContainer.addEventListener("TabMove", buftabs.updateTabMove, false);
+    window.gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
+    window.gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
+    window.gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
+    window.gBrowser.tabContainer.addEventListener("TabPinned", buftabs.updateTabPinned, false);
+    window.gBrowser.tabContainer.addEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
     window.addEventListener("fullscreen", buftabs.layout, false);
 }
 
 function unregisterMyListener() {
-    gBrowser.tabContainer.removeEventListener("TabOpen", buftabs.updateTabOpen, false);
-    gBrowser.tabContainer.removeEventListener("TabHide", buftabs.updateTabHide, false);
-    gBrowser.tabContainer.removeEventListener("TabMove", buftabs.updateTabMove, false);
-    gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
-    gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
-    gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
-    gBrowser.tabContainer.removeEventListener("TabPinned", buftabs.updateTabPinned, false);
-    gBrowser.tabContainer.removeEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
+    window.gBrowser.tabContainer.removeEventListener("TabOpen", buftabs.updateTabOpen, false);
+    window.gBrowser.tabContainer.removeEventListener("TabHide", buftabs.updateTabHide, false);
+    window.gBrowser.tabContainer.removeEventListener("TabMove", buftabs.updateTabMove, false);
+    window.gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
+    window.gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
+    window.gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
+    window.gBrowser.tabContainer.removeEventListener("TabPinned", buftabs.updateTabPinned, false);
+    window.gBrowser.tabContainer.removeEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
     window.removeEventListener("fullscreen", buftabs.layout, false);
 }
 buftabs.init();
