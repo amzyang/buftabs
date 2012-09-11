@@ -223,13 +223,13 @@ let buftabs = {
         else if (image == "")
             image = BookmarkCache.DEFAULT_FAVICON;
 
-        label.style.paddingLeft="18px";
+        label.style.paddingLeft="20px";
         label.style.backgroundImage='url("'+image+'")';
     },
 
     removeFavicon : function (arg) {
         let label = buftabs.Olabel(arg);
-        label.style.paddingLeft="4px";
+        label.style.paddingLeft="2px";
         label.style.backgroundImage='none';
     },
 
@@ -455,7 +455,9 @@ let buftabs = {
             if (buftabs.options['elem'].indexOf('n') >= 0 &&
                 !buftabs.options['rnu']) {
                 let index = label.tabindex + 1;
-                label.setAttribute("value", "[" + index + "]");
+                label.setAttribute("value", index + " ");
+            } else {
+                label.setAttribute("value", "");
             }
         } else {
             label.setAttribute("pinned", "false");
@@ -477,14 +479,14 @@ let buftabs = {
             if (buftabs.options['elem'].indexOf('n') >= 0) {
                 if (buftabs.options['rnu']) {
                     if (indicate.length > 0)
-                        indicate = "[" + (label.tabpos + 1) + " " + indicate + "]";
+                        indicate = (label.tabpos + 1) + " " + indicate + " ";
                     else
-                        indicate = "[" + (label.tabpos + 1) + "]";
+                        indicate = (label.tabpos + 1) + " ";
                 } else {
                     if (indicate.length > 0)
-                        indicate = "[" + (label.tabindex + 1) + " " + indicate + "]";
+                        indicate = (label.tabindex + 1) + " " + indicate + " ";
                     else
-                        indicate = "[" + (label.tabindex + 1) + "]";
+                        indicate = (label.tabindex + 1) + " ";
                 }
             }
 
