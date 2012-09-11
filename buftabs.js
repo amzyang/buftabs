@@ -48,7 +48,7 @@ var INFO =
     <item>
         <tags>'bte' 'buftabs-elem'</tags>
         <spec>'buftabs-elem' 'bte'</spec>
-        <type>charlist</type> <default>"nthb"</default>
+        <type>charlist</type> <default>"nthbi"</default>
         <description>
             <p>Define which sections are shown.</p>
         <p>Supported characters:</p>
@@ -131,7 +131,7 @@ let buftabs = {
         unregisterMyListener();
     },
 
-    get options() buftabs._options || {'elem':'nthb', 'buftabs': true, 'rnu': true, 'progress': true},
+    get options() buftabs._options || {'elem':'nthbi', 'buftabs': true, 'rnu': true, 'progress': true},
     set options(options) {
         buftabs._options = {
             'elem' : 'elem' in options ? options['elem'] : buftabs.options['elem'],
@@ -575,7 +575,7 @@ group.options.add(["buftabs-rnu", "btr"],
 group.options.add(["buftabs-elem", "bte"],
         "Show or hide certain elemments",
         "charlist",
-        "nthb",
+        "nthbi",
         {
             values: {
                 'i': 'Favicon',
