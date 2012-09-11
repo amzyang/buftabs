@@ -223,7 +223,7 @@ let buftabs = {
         else if (image == "")
             image = BookmarkCache.DEFAULT_FAVICON;
 
-        label.style.paddingLeft="21px";
+        label.style.paddingLeft="18px";
         label.style.backgroundImage='url("'+image+'")';
     },
 
@@ -452,10 +452,9 @@ let buftabs = {
             label.setAttribute("pinned", "true");
             buftabs.setFavicon(label, tab);
             // tab index
-            if (buftabs.options['elem'].indexOf('n') >= 0) {
-                let index = label.tabpos + 1;
-                if (buftabs.options['rnu'])
-                    index = label.tabindex + 1;
+            if (buftabs.options['elem'].indexOf('n') >= 0 &&
+                !buftabs.options['rnu']) {
+                let index = label.tabindex + 1;
                 label.setAttribute("value", "[" + index + "]");
             }
         } else {
@@ -614,10 +613,10 @@ group.commands.add(["buf[tabs]", "bt"],
 // Initialise highlight groups
 highlight.loadCSS(<![CDATA[
 	!BufTabs                                   {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}
-	!BufTabSelected                            {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; color:#000; background-color:#fff; margin:0 1px !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;max-width:120px;}
-	!BufTabAlternate                           {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; margin:0 1px !important; cursor:pointer !important;max-width:120px;}
-	!BufTab                                    {background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; margin:0 1px !important; cursor:pointer !important;max-width:120px;}
-	!BufTab:hover                              {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;}
-	!BufTabAlternate:hover                     {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;padding-right:0.4em;}
+	!BufTabSelected                            {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}
+	!BufTabAlternate                           {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
+	!BufTab                                    {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
+	!BufTab:hover                              {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
+	!BufTabAlternate:hover                     {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
 ]]>);
 
