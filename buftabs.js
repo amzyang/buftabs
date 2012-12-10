@@ -613,11 +613,11 @@ group.commands.add(["buf[tabs]", "bt"],
 );
 
 // Initialise highlight groups
-highlight.loadCSS(<![CDATA[
-	BufTabs                                   {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}
-	BufTabSelected                            {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}
-	BufTabAlternate                           {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
-	BufTab                                    {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
-	BufTab:hover                              {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
-	BufTabAlternate:hover                     {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
-]]>, true);
+highlight.loadCSS(
+	"BufTabs               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}\n"+
+	"BufTabSelected        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}\n"+
+	"BufTabAlternate       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
+	"BufTab                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
+	"BufTab:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"+
+	"BufTabAlternate:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"
+, true);
