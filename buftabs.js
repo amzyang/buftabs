@@ -1,95 +1,4 @@
-// "use strict";
-XML.ignoreWhitespace = false;
-XML.prettyPrinting = false;
-var INFO =
-<plugin name="buftabs" version="1.1.0"
-    href="https://github.com/grassofhust/buftabs"
-    summary="Buftabs: show the tabbar in the statusline"
-    xmlns={NS}>
-    <author email="lucas@glacicle.org" href="http://git.glacicle.org/vimperator-buftabs/">Lucas de Vries</author>
-    <author email="frederick.zou@gmail.com">Yang Zou</author>
-    <license href="http://sam.zoy.org/wtfpl/">WTFPL</license>
-    <project name="Pentadactyl" minVersion="1.0"/>
-    <p>
-        When the script is loaded it hijacks the statusline to display a
-        list of tabs, you can use the <o>buftabs</o> option to toggle it
-        on or off.
-    </p>
-
-    <p>
-        Use the BufTab, BufTabAlternate, BufTabSelected and BufTabs highlight groups to style the
-        buftabs. Make sure you have called the "loadplugins" command
-        before using the highlight groups in your vimperatorrc.
-    </p>
-
-    <p>
-        Thanks Lucas de Vries and other folks on vimperator/dactyl. This plugins was initial developed by Lucas de Vries.
-    </p>
-    <item>
-        <tags>'bt' 'buftabs'</tags>
-        <spec>'buftabs' 'bt'</spec>
-        <type>boolean</type> <default>true</default>
-        <description>
-            Toggle buftabs on or off.
-        </description>
-    </item>
-    <item>
-        <tags>'btr' 'buftabs-rnu'</tags>
-        <spec>'buftabs-rnu' 'btr'</spec>
-        <type>boolean</type> <default>true</default>
-        <description>Relative tabnumber.</description>
-    </item>
-    <item>
-        <tags>'btp' 'buftabs-progress'</tags>
-        <spec>'buftabs-progress' 'btp'</spec>
-        <type>boolean</type> <default>true</default>
-        <description>Toggle progressbar on or off.</description>
-    </item>
-    <item>
-        <tags>'bte' 'buftabs-elem'</tags>
-        <spec>'buftabs-elem' 'bte'</spec>
-        <type>charlist</type> <default>"nthbi"</default>
-        <description>
-            <p>Define which sections are shown.</p>
-        <p>Supported characters:</p>
-
-        <dl dt="width: 6em;">
-            <dt>i</dt>      <dd>Favicon</dd>
-            <dt>n</dt>      <dd>Tabnumber</dd>
-            <dt>t</dt>      <dd>Tab title</dd>
-            <dt>h</dt>      <dd>Forward/Backward indicator</dd>
-            <dt>b</dt>      <dd>Heart indicator</dd>
-        </dl>
-        </description>
-    </item>
-    <item>
-      <tags>:bt :buftabs</tags>
-      <strut/>
-      <spec>:buftabs</spec>
-      <description>
-        <p>Toggle buftabs on or off.</p>
-      </description>
-    </item>
-    <p>There are four highlight groups: BufTab, BufTabSelected, BufTabAlternate and BufTabs</p>
-
-    <dl dt="width: 12em;">
-        <dt>BufTab</dt>                 <dd>Tabs</dd>
-        <dt>BufTabSelected</dt>         <dd>Selected Tab</dd>
-        <dt>BufTabAlternate</dt>        <dd>Previously selected tab</dd>
-        <dt>BufTabs</dt>                <dd>Buftabs itself</dd>
-    </dl>
-
-    <p>Recommend Settings:</p>
-    <code>
-        hi -a BufTabSelected                            background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; color:#FFF; background-color:#000; padding:0 4px; font-weight:normal;border-radius:2px;
-        hi -a BufTabAlternate                           background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;
-        hi -a BufTab                                    background-repeat:no-repeat; background-size:contain, contain; background-position: 4px top; padding:0 4px; cursor:pointer !important;
-        hi -a BufTab:hover                              color:#2e3330;background-color: #88b090; border-radius:2px;
-        hi -a BufTabAlternate:hover                     color:#2e3330;background-color: #88b090; border-radius:2px;
-    </code>
-    <Warning>Buftabs does not support firefox 3.6.</Warning>
-</plugin>;
-
+"use strict";
 let buftabs = {
     id : 'dactyl-statusline-field-buftabs',
     fullLoad: false,
@@ -98,9 +7,8 @@ let buftabs = {
             if (document.getElementById(buftabs.id))
                 commandline.widgets.updateVisibility();
             else {
-				let widget = util.xmlToDom(
-					<hbox xmlns={XUL} highlight="BufTabs" id={buftabs.id} flex="1"/>,
-					document);
+                let widget = DOM.fromJSON(["hbox", {"xmlns": XUL, "id": buftabs.id, "flex": 1}], document);
+                widget.setAttribute("highlight", "BufTabs");
                 statusline.widgets.url.parentNode.insertBefore(widget, statusline.widgets.url.nextSibling);
                 commandline.widgets.addElement({
                         name: "buftabs",
@@ -287,20 +195,6 @@ let buftabs = {
                 buftabs.btabs.scrollLeft = sum - buftabs.btabs.clientWidth;
         }
 
-    },
-
-    buildContainer: function () {
-        let container = util.xmlToDom(
-            <hbox xmlns={XUL} flex="0" tooltiptext="">
-                <xul:image flex="0" key="image" class="plain show buftabs-image" />
-                <xul:label flex="0" key="tabnumber" class="plain show buftabs-tabnumber" />
-                <xul:label flex="0" key="indexnumber" class="plain show buftabs-indexnumber" />
-                <xul:label flex="0" key="info" class="plain show buftabs-info" />
-                <xul:label flex="0" key="history" class="plain show buftabs-history" />
-                <xul:label flex="0" key="bookmark" class="plain show buftabs-bookmark" />
-            </hbox>,
-            document);
-        return container;
     },
 
     obtainElements: function (container) {
@@ -502,12 +396,12 @@ let buftabs = {
 
         // Set the correct highlight group
         if (tabs.index(null, true) == label.tabpos)
-            label.setAttributeNS(NS.uri, "highlight", "BufTabSelected");
+            label.setAttribute("highlight", "BufTabSelected");
         else {
             if (tabs.index(tabs.alternate, true) == label.tabpos)
-                label.setAttributeNS(NS.uri, "highlight", "BufTabAlternate");
+                label.setAttribute("highlight", "BufTabAlternate");
             else
-                label.setAttributeNS(NS.uri, "highlight", "BufTab");
+                label.setAttribute("highlight", "BufTab");
         }
 
     },
@@ -614,10 +508,10 @@ group.commands.add(["buf[tabs]", "bt"],
 
 // Initialise highlight groups
 highlight.loadCSS(
-	"BufTabs               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}\n"+
-	"BufTabSelected        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}\n"+
-	"BufTabAlternate       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
-	"BufTab                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
-	"BufTab:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"+
-	"BufTabAlternate:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"
+    "[highlight~=\"BufTabs\"]               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}\n"+
+    "[highlight~=\"BufTabSelected\"]        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}\n"+
+    "[highlight~=\"BufTabAlternate\"]       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
+    "[highlight~=\"BufTab\"]                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
+    "[highlight~=\"BufTab\"]:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"+
+    "[highlight~=\"BufTabAlternate\"]:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"
 , true);
