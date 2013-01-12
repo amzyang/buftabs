@@ -307,7 +307,7 @@ let buftabs = {
         buftabs.buildLabels();
 
         let visibleTabs = window.gBrowser.visibleTabs;
-        let closed_labelIndex =
+        var closed_labelIndex =
             window.gBrowser.tabContainer.getIndexOfItem(aEvent.target);
         // Create the new tabs
         Array.forEach(visibleTabs, function(tab, idx) {
@@ -315,9 +315,10 @@ let buftabs = {
             let label = buftabs.Olabel(idx);
 
             // Fill label
-            label.tabpos = iidx;
+            label.tabpos = idx;
             label.tabindex = window.gBrowser.tabContainer.getIndexOfItem(tab);
             // dirty hack, I don't know why
+            // maybe visibleTabs are been cached?
             if (label.tabindex > closed_labelIndex)
                 label.tabindex = label.tabindex - 1;
 
