@@ -7,8 +7,12 @@ let buftabs = {
             if (document.getElementById(buftabs.id))
                 commandline.widgets.updateVisibility();
             else {
-                let widget = DOM.fromJSON(["hbox", {"xmlns": XUL, "id": buftabs.id, "flex": 1}], document);
-                widget.setAttribute("highlight", "BufTabs");
+                let widget = DOM.fromJSON(["hbox",
+                        {"xmlns": XUL,
+                            "id": buftabs.id,
+                            "dactyl:highlight": "BufTabs",
+                            "flex": 1}]
+                , document);
                 statusline.widgets.url.parentNode.insertBefore(widget, statusline.widgets.url.nextSibling);
                 commandline.widgets.addElement({
                         name: "buftabs",
@@ -396,12 +400,12 @@ let buftabs = {
 
         // Set the correct highlight group
         if (tabs.index(null, true) == label.tabpos)
-            label.setAttribute("highlight", "BufTabSelected");
+            label.setAttributeNS(NS, "highlight", "BufTabSelected");
         else {
             if (tabs.index(tabs.alternate, true) == label.tabpos)
-                label.setAttribute("highlight", "BufTabAlternate");
+                label.setAttributeNS(NS, "highlight", "BufTabAlternate");
             else
-                label.setAttribute("highlight", "BufTab");
+                label.setAttributeNS(NS, "highlight", "BufTab");
         }
 
     },
@@ -507,11 +511,11 @@ group.commands.add(["buf[tabs]", "bt"],
 );
 
 // Initialise highlight groups
-highlight.loadCSS(
-    "[highlight~=\"BufTabs\"]               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}\n"+
-    "[highlight~=\"BufTabSelected\"]        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}\n"+
-    "[highlight~=\"BufTabAlternate\"]       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
-    "[highlight~=\"BufTab\"]                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}\n"+
-    "[highlight~=\"BufTab\"]:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"+
-    "[highlight~=\"BufTabAlternate\"]:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}\n"
-, true);
+highlight.loadCSS(literal(/*
+    BufTabs               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}
+    BufTabSelected        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}
+    BufTabAlternate       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
+    BufTab                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
+    BufTab:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
+    BufTabAlternate:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
+*/), true);
