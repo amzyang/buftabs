@@ -250,16 +250,13 @@ let buftabs = {
                 buftabs.updateLabelTooltip(this, this.tabindex);
             }, false);
             label.addEventListener('click', function(ev) {
-                    if (ev.button == 0)
-                        window.gBrowser.selectTabAtIndex(this.tabpos);
-                    else if (ev.button == 1) {
-                        // conflict with tab-option.js?
-                        if (window.gBrowser.visibleTabs[this.tabpos + 1])
-                            window.gBrowser.tabContainer.selectedItem =
-                                window.gBrowser.visibleTabs[this.tabpos + 1];
-                        window.gBrowser.removeTab(
-                            window.gBrowser.tabContainer.getItemAtIndex(this.tabindex));
-                    }
+                let gBrowser = window.gBrowser;
+                if (ev.button == 0)
+                    gBrowser.selectTabAtIndex(this.tabpos);
+                else if (ev.button == 1) {
+                    gBrowser.removeTab(
+                        gBrowser.tabContainer.getItemAtIndex(this.tabindex));
+                }
             }, false);
         }
     },
