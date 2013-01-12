@@ -1,27 +1,32 @@
-"use strict";
+'use strict';
 let buftabs = {
-    id : 'dactyl-statusline-field-buftabs',
+    id: 'dactyl-statusline-field-buftabs',
     fullLoad: false,
-    init : function () {
+    init: function() {
         if (buftabs.options['buftabs']) {
             if (document.getElementById(buftabs.id))
                 commandline.widgets.updateVisibility();
             else {
-                let widget = DOM.fromJSON(["hbox",
-                        {"xmlns": XUL,
-                            "id": buftabs.id,
-                            "dactyl:highlight": "BufTabs",
-                            "flex": 1}]
-                , document);
-                statusline.widgets.url.parentNode.insertBefore(widget, statusline.widgets.url.nextSibling);
+                let widget = DOM.fromJSON(['hbox',
+                        {'xmlns': XUL,
+                            'id': buftabs.id,
+                            'dactyl:highlight': 'BufTabs',
+                            'flex': 1}],
+                    document);
+                statusline.widgets.url.parentNode.insertBefore(widget,
+                    statusline.widgets.url.nextSibling);
                 commandline.widgets.addElement({
-                        name: "buftabs",
-                        getGroup: function () this.statusbar,
-                        getValue: function () statusline.visible && buftabs.options['buftabs'],
-                        noValue: true
+                    name: 'buftabs',
+                    getGroup: function() this.statusbar,
+                    getValue: function() statusline.visible &&
+                        buftabs.options['buftabs'],
+                    noValue: true
                 });
-                commandline.widgets.statusbar.buftabs.addEventListener("DOMMouseScroll", function(event) {
-                        window.gBrowser.tabContainer.advanceSelectedTab(event.detail < 0 ? -1 : 1, true);
+                commandline.widgets.statusbar.buftabs.addEventListener(
+                    'DOMMouseScroll',
+                    function(event) {
+                        window.gBrowser.tabContainer.advanceSelectedTab(
+                            event.detail < 0 ? -1 : 1, true);
                         event.stopPropagation();
                     }, true);
 
@@ -43,13 +48,17 @@ let buftabs = {
         unregisterMyListener();
     },
 
-    get options() buftabs._options || {'elem':'nthbi', 'buftabs': true, 'rnu': true, 'progress': true},
+    get options() buftabs._options ||
+        {'elem': 'nthbi', 'buftabs': true, 'rnu': true, 'progress': true},
     set options(options) {
         buftabs._options = {
-            'elem' : 'elem' in options ? options['elem'] : buftabs.options['elem'],
-            'buftabs': 'buftabs' in options ? options['buftabs'] : buftabs.options['buftabs'],
+            'elem' : 'elem' in options ? options['elem'] :
+                buftabs.options['elem'],
+            'buftabs': 'buftabs' in options ? options['buftabs'] :
+                buftabs.options['buftabs'],
             'rnu': 'rnu' in options ? options['rnu'] : buftabs.options['rnu'],
-            'progress': 'progress' in options ? options['progress'] : buftabs.options['progress']
+            'progress': 'progress' in options ? options['progress'] :
+                buftabs.options['progress']
         };
         if (buftabs.fullLoad) // window has fully loaded
             buftabs.init();
@@ -65,14 +74,14 @@ let buftabs = {
         buftabs._curLabelIndex = value;
     },
 
-    Otab : function (arg) {
+    Otab: function(arg) {
         if (typeof arg == 'object')
             return arg;
         return window.gBrowser.tabs[arg];
     },
 
-    mb_strlen: function (str) {
-        let m=encodeURIComponent(str).match(/%[89ABab]/g);
+    mb_strlen: function(str) {
+        let m = encodeURIComponent(str).match(/%[89ABab]/g);
         let extra_length = m ? m.length / 3 : 0;
         return str.length + extra_length;
     },
@@ -87,7 +96,7 @@ let buftabs = {
                 overflow = true;
             i = i + 1;
         }
-        return str.substr(0, i).replace(/^\s+|\s+$/g, "");
+        return str.substr(0, i).replace(/^\s+|\s+$/g, '');
     },
 
     Obrowser: function(arg) {
@@ -95,20 +104,20 @@ let buftabs = {
             return arg;
         return window.gBrowser.getBrowserAtIndex(arg);
     },
-    Olabel: function (arg) {
+    Olabel: function(arg) {
         if (typeof arg == 'object')
             return arg;
         return buftabs.blabels[arg];
     },
 
-    Oposition: function (arg) {
+    Oposition: function(arg) {
         let label = arg;
         if (typeof arg != 'object')
             label = buftabs.Olabel(arg);
         return label.getBoundingClientRect();
     },
 
-    Onavigation : function (arg) {
+    Onavigation: function(arg) {
         let tab = arg;
         if (typeof arg != 'object')
             tab = buftabs.Otab(arg);
@@ -117,41 +126,41 @@ let buftabs = {
         if (browser.webNavigation) {
             let sh = browser.webNavigation.sessionHistory;
             if (sh && (sh.index > 0) && (sh.index < sh.count - 1))
-                return  UTF8("↔");
+                return UTF8('↔');
             if (sh && (sh.index < sh.count - 1) && (sh.index == 0))
-                return UTF8("→");
+                return UTF8('→');
             if (sh && (sh.index >= sh.count - 1) && (sh.index > 0))
-                return UTF8("←");
+                return UTF8('←');
         }
-        return "";
+        return '';
     },
 
-    setFavicon : function (aLabel, aTab) {
+    setFavicon: function(aLabel, aTab) {
         let label = buftabs.Olabel(aLabel);
         let tab = buftabs.Otab(aTab);
         let image = tab.image;
         if (tab.linkedBrowser.webProgress.isLoadingDocument)
-            image = "chrome://browser/skin/tabbrowser/connecting.png";
-        else if (image == "")
+            image = 'chrome://browser/skin/tabbrowser/connecting.png';
+        else if (image == '')
             image = BookmarkCache.DEFAULT_FAVICON;
 
-        label.style.paddingLeft="20px";
-        label.style.backgroundImage='url("'+image+'")';
+        label.style.paddingLeft = '20px';
+        label.style.backgroundImage = 'url("' + image + '")';
     },
 
-    removeFavicon : function (arg) {
+    removeFavicon: function(arg) {
         let label = buftabs.Olabel(arg);
-        label.style.paddingLeft="2px";
-        label.style.backgroundImage='none';
+        label.style.paddingLeft = '2px';
+        label.style.backgroundImage = 'none';
     },
 
-    showFavicons : function () {
-        buftabs.blabels.foreach(function (label) buftabs.setFavicon(label));
+    showFavicons: function() {
+        buftabs.blabels.foreach(function(label) buftabs.setFavicon(label));
         buftabs.layout();
     },
 
     // layout
-    layout: function () {
+    layout: function() {
         // Scroll
         let position = buftabs.Oposition(buftabs.curLabelIndex);
         let first_position = buftabs.Oposition(0);
@@ -168,15 +177,20 @@ let buftabs = {
 
         if (next_position) {
             if (next_position['right'] >= btabs_position['right'])
-                buftabs.btabs.scrollLeft = next_position['right'] + btabs_position['left'] - first_position['left'] - btabs_position['right'];
+                buftabs.btabs.scrollLeft = next_position['right'] +
+                   btabs_position['left'] - first_position['left'] -
+                   btabs_position['right'];
         } else {
             if (position['right'] >= btabs_position['right'])
-                buftabs.btabs.scrollLeft = position['right'] + btabs_position['left'] - first_position['left'] - btabs_position['right'];
+                buftabs.btabs.scrollLeft = position['right'] +
+                   btabs_position['left'] - first_position['left'] -
+                   btabs_position['right'];
         }
 
         if (prev_position) {
             if (prev_position['left'] <= btabs_position['left'])
-                buftabs.btabs.scrollLeft = prev_position['left'] - first_position['left'];
+                buftabs.btabs.scrollLeft = prev_position['left'] -
+                   first_position['left'];
 
         } else {
             if (position['left'] <= btabs_position['left'])
@@ -190,34 +204,36 @@ let buftabs = {
             // check last label position
             let sum = 0;
             let labels = Array.slice(buftabs.blabels);
-            labels.forEach(function (label) {
+            labels.forEach(function(label) {
                 sum += label.scrollWidth;
             });
             if (last_position['right'] < buftabs.btabs.clientWidth)
                 // This doesn't work, why?
-                // buftabs.btabs.scrollLeft = buftabs.btabs.scrollWidth - buftabs.btabs.clientWidth;
+                // buftabs.btabs.scrollLeft = buftabs.btabs.scrollWidth -
+                    // buftabs.btabs.clientWidth;
                 buftabs.btabs.scrollLeft = sum - buftabs.btabs.clientWidth;
         }
 
     },
 
-    obtainElements: function (container) {
+    obtainElements: function(container) {
         let nodes = container.childNodes;
-        for each (let node in nodes) {
+        for each(let node in nodes) {
             object[node.key] = node;
         }
     },
 
-    toggleProgressBar: function () {
+    toggleProgressBar: function() {
         commandline.widgets.addElement({
-                name: "progress",
-                getGroup: function () this.statusbar,
-                getValue: function () buftabs.options['progress'] || !buftabs.options['buftabs'],
+                name: 'progress',
+                getGroup: function() this.statusbar,
+                getValue: function() buftabs.options['progress'] ||
+                    !buftabs.options['buftabs'],
                 noValue: true
         });
     },
 
-    buildLabels: function () {
+    buildLabels: function() {
         // Get buftabbar
         let btabs = buftabs.btabs;
         let visibleTabs_length = window.gBrowser.visibleTabs.length;
@@ -227,86 +243,89 @@ let buftabs = {
             btabs.removeChild(btabs.lastChild);
 
         while (btabs.childNodes.length < visibleTabs_length) {
-            let label = document.createElement("label");
-            label.setAttribute("crop", "end"); // text-overflow, works for firefox 7
+            let label = document.createElement('label');
+            label.setAttribute('crop', 'end');
             btabs.appendChild(label);
-            label.addEventListener("mouseover", function(ev) {
+            label.addEventListener('mouseover', function(ev) {
                 buftabs.updateLabelTooltip(this, this.tabindex);
             }, false);
-            label.addEventListener("click", function (ev) {
+            label.addEventListener('click', function(ev) {
                     if (ev.button == 0)
                         window.gBrowser.selectTabAtIndex(this.tabpos);
                     else if (ev.button == 1) {
+                        // conflict with tab-option.js?
                         if (window.gBrowser.visibleTabs[this.tabpos + 1])
-                            window.gBrowser.tabContainer.selectedItem = window.gBrowser.visibleTabs[this.tabpos + 1]; // conflict with tab-option.js?
-                        window.gBrowser.removeTab(window.gBrowser.tabContainer.getItemAtIndex(this.tabindex));
+                            window.gBrowser.tabContainer.selectedItem =
+                                window.gBrowser.visibleTabs[this.tabpos + 1];
+                        window.gBrowser.removeTab(
+                            window.gBrowser.tabContainer.getItemAtIndex(this.tabindex));
                     }
             }, false);
         }
     },
     // Update the tabs
-    update: function () {
-        if (!buftabs.options["buftabs"])
+    update: function() {
+        if (!buftabs.options['buftabs'])
             return;
 
         buftabs.buildLabels();
 
         let visibleTabs = window.gBrowser.visibleTabs;
         // Create the new tabs
-        for (let [i, tab] in iter(visibleTabs)) {
+        Array.forEach(visibleTabs, function(tab, idx) {
             // Create label
-            let label = buftabs.Olabel(i);
+            let label = buftabs.Olabel(idx);
 
             // Fill label
-            label.tabpos = i;
+            label.tabpos = idx;
             label.tabindex = window.gBrowser.tabContainer.getIndexOfItem(tab);
 
             buftabs.fillLabel(label, tab);
-        }
-
+        });
         buftabs.curLabelIndex = tabs.index(null, true);
         buftabs.layout();
 
     },
 
-    updateTabOpen: function (aEvent) {
+    updateTabOpen: function(aEvent) {
         buftabs.update();
     },
 
-    updateTabHide: function (aEvent) {
+    updateTabHide: function(aEvent) {
         buftabs.update();
     },
 
-    updateTabMove: function (aEvent) {
+    updateTabMove: function(aEvent) {
         buftabs.update();
     },
 
-    updateTabSelect: function (aEvent) {
+    updateTabSelect: function(aEvent) {
         buftabs.update();
     },
 
-    updateTabClose: function (aEvent) {
-        if (!buftabs.options["buftabs"])
+    updateTabClose: function(aEvent) {
+        if (!buftabs.options['buftabs'])
             return;
 
         buftabs.buildLabels();
 
         let visibleTabs = window.gBrowser.visibleTabs;
-        let closed_labelIndex = window.gBrowser.tabContainer.getIndexOfItem(aEvent.target);
+        let closed_labelIndex =
+            window.gBrowser.tabContainer.getIndexOfItem(aEvent.target);
         // Create the new tabs
-        for (let [i, tab] in iter(visibleTabs)) {
+        Array.forEach(visibleTabs, function(tab, idx) {
             // Create label
-            let label = buftabs.Olabel(i);
+            let label = buftabs.Olabel(idx);
 
             // Fill label
-            label.tabpos = i;
+            label.tabpos = iidx;
             label.tabindex = window.gBrowser.tabContainer.getIndexOfItem(tab);
-            if (label.tabindex > closed_labelIndex) // dirty hack, I don't know why
+            // dirty hack, I don't know why
+            if (label.tabindex > closed_labelIndex)
                 label.tabindex = label.tabindex - 1;
 
             buftabs.fillLabel(label, tab);
-        }
-
+        });
         buftabs.curLabelIndex = tabs.index(null, true);
         buftabs.layout();
 
@@ -344,53 +363,54 @@ let buftabs = {
         let label = buftabs.Olabel(arglabel);
         let tab = buftabs.Otab(argtab);
         let browser = tab.linkedBrowser;
-        let tabvalue = "";
+        let tabvalue = '';
 
         if (tab.pinned) {
-            label.setAttribute("pinned", "true");
+            label.setAttribute('pinned', 'true');
             buftabs.setFavicon(label, tab);
             // tab index
             if (buftabs.options['elem'].indexOf('n') >= 0 &&
                 !buftabs.options['rnu']) {
                 let index = label.tabindex + 1;
-                label.setAttribute("value", index + " ");
+                label.setAttribute('value', index + ' ');
             } else {
-                label.setAttribute("value", "");
+                label.setAttribute('value', '');
             }
         } else {
-            label.setAttribute("pinned", "false");
+            label.setAttribute('pinned', 'false');
             // Get title
             if (buftabs.options['elem'].indexOf('t') >= 0)
                 tabvalue += tab.label;
 
-            let indicate = "";
+            let indicate = '';
             // Get history
             if (buftabs.options['elem'].indexOf('h') >= 0)
                 indicate = buftabs.Onavigation(tab);
             // tabvalue += buftabs.Onavigation(tab); // todo, use tab directly
 
             // Bookmark icon
-            if (buftabs.options['elem'].indexOf('b') >= 0 && bookmarkcache.isBookmarked(browser.contentDocument.location.href))
-                indicate += UTF8("❤");
+            if (buftabs.options['elem'].indexOf('b') >= 0 &&
+                bookmarkcache.isBookmarked(browser.contentDocument.location.href))
+                indicate += UTF8('❤');
 
             // Brackets and index
             if (buftabs.options['elem'].indexOf('n') >= 0) {
                 if (buftabs.options['rnu']) {
                     if (indicate.length > 0)
-                        indicate = (label.tabpos + 1) + " " + indicate + " ";
+                        indicate = (label.tabpos + 1) + ' ' + indicate + ' ';
                     else
-                        indicate = (label.tabpos + 1) + " ";
+                        indicate = (label.tabpos + 1) + ' ';
                 } else {
                     if (indicate.length > 0)
-                        indicate = (label.tabindex + 1) + " " + indicate + " ";
+                        indicate = (label.tabindex + 1) + ' ' + indicate + ' ';
                     else
-                        indicate = (label.tabindex + 1) + " ";
+                        indicate = (label.tabindex + 1) + ' ';
                 }
             }
 
             tabvalue = indicate + tabvalue;
 
-            label.setAttribute("value", tabvalue);
+            label.setAttribute('value', tabvalue);
             // tabbrowser getIcon
             if (buftabs.options['elem'].indexOf('i') >= 0)
                 buftabs.setFavicon(label, tab);
@@ -400,80 +420,82 @@ let buftabs = {
 
         // Set the correct highlight group
         if (tabs.index(null, true) == label.tabpos)
-            label.setAttributeNS(NS, "highlight", "BufTabSelected");
+            label.setAttributeNS(NS, 'highlight', 'BufTabSelected');
         else {
             if (tabs.index(tabs.alternate, true) == label.tabpos)
-                label.setAttributeNS(NS, "highlight", "BufTabAlternate");
+                label.setAttributeNS(NS, 'highlight', 'BufTabAlternate');
             else
-                label.setAttributeNS(NS, "highlight", "BufTab");
+                label.setAttributeNS(NS, 'highlight', 'BufTab');
         }
 
     },
 
-    updateLabelTooltip: function (aLabel, aTab) {
+    updateLabelTooltip: function(aLabel, aTab) {
         let label = buftabs.Olabel(aLabel);
         let tab = buftabs.Otab(aTab);
         let browser = tab.linkedBrowser;
-        label.setAttribute('tooltiptext', tab.label + "\n" + browser.currentURI.spec);
-    },
-
+        label.setAttribute('tooltiptext', tab.label + '\n' +
+            browser.currentURI.spec);
+    }
 };
 
 function registerMyListener() {
-    window.gBrowser.tabContainer.addEventListener("TabOpen", buftabs.updateTabOpen, false);
-    window.gBrowser.tabContainer.addEventListener("TabHide", buftabs.updateTabHide, false);
-    window.gBrowser.tabContainer.addEventListener("TabMove", buftabs.updateTabMove, false);
-    window.gBrowser.tabContainer.addEventListener("TabClose", buftabs.updateTabClose, false);
-    window.gBrowser.tabContainer.addEventListener("TabSelect", buftabs.updateTabSelect, false);
-    window.gBrowser.tabContainer.addEventListener("TabAttrModified", buftabs.updateTabAttrModified, false); // updateed, use fillLabel
-    window.gBrowser.tabContainer.addEventListener("TabPinned", buftabs.updateTabPinned, false);
-    window.gBrowser.tabContainer.addEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
-    window.addEventListener("fullscreen", buftabs.layout, false);
+    let add = window.gBrowser.tabContainer.addEventListener;
+    add('TabOpen', buftabs.updateTabOpen, false);
+    add('TabHide', buftabs.updateTabHide, false);
+    add('TabMove', buftabs.updateTabMove, false);
+    add('TabClose', buftabs.updateTabClose, false);
+    add('TabSelect', buftabs.updateTabSelect, false);
+    add('TabAttrModified', buftabs.updateTabAttrModified, false);
+    add('TabPinned', buftabs.updateTabPinned, false);
+    add('TabUnpinned', buftabs.updateTabUnpinned, false);
+    window.addEventListener('fullscreen', buftabs.layout, false);
 }
 
 function unregisterMyListener() {
-    window.gBrowser.tabContainer.removeEventListener("TabOpen", buftabs.updateTabOpen, false);
-    window.gBrowser.tabContainer.removeEventListener("TabHide", buftabs.updateTabHide, false);
-    window.gBrowser.tabContainer.removeEventListener("TabMove", buftabs.updateTabMove, false);
-    window.gBrowser.tabContainer.removeEventListener("TabClose", buftabs.updateTabClose, false);
-    window.gBrowser.tabContainer.removeEventListener("TabSelect", buftabs.updateTabSelect, false);
-    window.gBrowser.tabContainer.removeEventListener("TabAttrModified", buftabs.updateTabAttrModified, false);
-    window.gBrowser.tabContainer.removeEventListener("TabPinned", buftabs.updateTabPinned, false);
-    window.gBrowser.tabContainer.removeEventListener("TabUnpinned", buftabs.updateTabUnpinned, false);
-    window.removeEventListener("fullscreen", buftabs.layout, false);
+    let remove = window.gBrowser.tabContainer.removeEventListener;
+    remove('TabOpen', buftabs.updateTabOpen, false);
+    remove('TabHide', buftabs.updateTabHide, false);
+    remove('TabMove', buftabs.updateTabMove, false);
+    remove('TabClose', buftabs.updateTabClose, false);
+    remove('TabSelect', buftabs.updateTabSelect, false);
+    remove('TabAttrModified', buftabs.updateTabAttrModified, false);
+    remove('TabPinned', buftabs.updateTabPinned, false);
+    remove('TabUnpinned', buftabs.updateTabUnpinned, false);
+    window.removeEventListener('fullscreen', buftabs.layout, false);
 }
 buftabs.init();
 window.addEventListener('unload', buftabs.destory, false);
 
 // Options
-group.options.add(["buftabs-progress", "btp"],
-    "Show progress",
-    "boolean",
+group.options.add(['buftabs-progress', 'btp'],
+    'Show progress',
+    'boolean',
     true,
     {
-        setter: function (value) {
+        setter: function(value) {
             buftabs.options = {'progress': value};
             return value;
         }
     }
 );
 
-group.options.add(["buftabs-rnu", "btr"],
-    "Show Relative tabnumber",
-    "boolean",
+group.options.add(['buftabs-rnu', 'btr'],
+    'Show Relative tabnumber',
+    'boolean',
     true,
     {
-        setter: function (value) {
+        setter: function(value) {
             buftabs.options = {'rnu': value};
             return value;
         }
     }
 );
 
-group.options.add(["buftabs-elem", "bte"],
-        "Show or hide certain elemments",
-        "charlist",
-        "nthbi",
+group.options.add(['buftabs-elem', 'bte'],
+        'Show or hide certain elemments',
+        'charlist',
+        'nthbi',
         {
             values: {
                 'i': 'Favicon',
@@ -482,18 +504,18 @@ group.options.add(["buftabs-elem", "bte"],
                 'h': 'History forward/backward indicate',
                 'b': 'Bookmark state'
             },
-            setter: function (value) {
+            setter: function(value) {
                 buftabs.options = {'elem': value};
                 return value;
             }
         });
 
-group.options.add(["buftabs", "bt"],
-        "Control whether to use buftabs in the statusline",
-        "boolean",
+group.options.add(['buftabs', 'bt'],
+        'Control whether to use buftabs in the statusline',
+        'boolean',
         true,
         {
-            setter: function (value) {
+            setter: function(value) {
                 buftabs.options = {'buftabs' : value};
                 return value;
             }
@@ -501,21 +523,61 @@ group.options.add(["buftabs", "bt"],
 );
 
 // Add custom commands
-group.commands.add(["buf[tabs]", "bt"],
-	"Activate buftabs manual",
-	buftabs.setup,
-	{
-		argCount: 0
+group.commands.add(['buf[tabs]', 'bt'],
+    'Activate buftabs manually',
+    buftabs.setup,
+    {
+        argCount: 0
     },
     true
 );
 
 // Initialise highlight groups
 highlight.loadCSS(literal(/*
-    BufTabs               {color: inherit; margin:0 !important; padding:0 !important; overflow:hidden;}
-    BufTabSelected        {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; color:#000; background-color:#fff; margin:0 !important; font-weight:normal; border-bottom-left-radius:2px; border-bottom-right-radius:2px;max-width:130px;}
-    BufTabAlternate       {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
-    BufTab                {background-repeat:no-repeat; background-size:contain, contain; background-position: 2px top; margin:0 !important; cursor:pointer !important;max-width:130px;}
-    BufTab:hover          {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
-    BufTabAlternate:hover {color:#2e3330;background-color: #88b090; border-bottom-left-radius:2px; border-bottom-right-radius:2px;}
+     BufTabs {
+         color: inherit;
+         margin:0 !important;
+         padding:0 !important;
+         overflow:hidden;
+     }
+     BufTabSelected {
+         background-repeat:no-repeat;
+         background-size:contain, contain;
+         background-position: 2px top;
+         background-color:#fff;
+         color:#000;
+         margin:0 !important;
+         font-weight:normal;
+         border-bottom-left-radius:2px;
+         border-bottom-right-radius:2px;
+         max-width:130px;
+     }
+     BufTabAlternate {
+         background-repeat:no-repeat;
+         background-size:contain, contain;
+         background-position: 2px top;
+         margin:0 !important;
+         cursor:pointer !important;
+         max-width:130px;
+    }
+    BufTab {
+        background-repeat:no-repeat;
+        background-size:contain, contain;
+        background-position: 2px top;
+        margin:0 !important;
+        cursor:pointer !important;
+        max-width:130px;
+    }
+    BufTab:hover {
+        color:#2e3330;
+        background-color: #88b090;
+        border-bottom-left-radius:2px;
+        border-bottom-right-radius:2px;
+    }
+    BufTabAlternate:hover {
+        color:#2e3330;
+        background-color: #88b090;
+        border-bottom-left-radius:2px;
+        border-bottom-right-radius:2px;
+    }
 */), true);
