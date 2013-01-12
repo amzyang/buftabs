@@ -386,9 +386,11 @@ let buftabs = {
             // tabvalue += buftabs.Onavigation(tab); // todo, use tab directly
 
             // Bookmark icon
-            if (buftabs.options['elem'].indexOf('b') >= 0 &&
-                bookmarkcache.isBookmarked(browser.contentDocument.location.href))
-                indicate += UTF8('❤');
+            if (buftabs.options['elem'].indexOf('b') >= 0) {
+                let href = browser.contentDocument.location.href;
+                if (bookmarkcache.isBookmarked(href))
+                    indicate += UTF8('❤');
+            }
 
             // Brackets and index
             if (buftabs.options['elem'].indexOf('n') >= 0) {
