@@ -533,7 +533,7 @@ group.commands.add(['buf[tabs]', 'bt'],
 );
 
 // Initialise highlight groups
-highlight.loadCSS(literal(/*
+highlight.loadCSS(literal(function() /*
      BufTabs {
          color: inherit;
          margin:0 !important;
@@ -580,4 +580,4 @@ highlight.loadCSS(literal(/*
         border-bottom-left-radius:2px;
         border-bottom-right-radius:2px;
     }
-*/), true);
+*/$), true);
