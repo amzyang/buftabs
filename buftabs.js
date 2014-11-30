@@ -25,8 +25,10 @@ let buftabs = {
                 commandline.widgets.statusbar.buftabs.addEventListener(
                     'DOMMouseScroll',
                     function(event) {
-                        window.gBrowser.tabContainer.advanceSelectedTab(
-                            event.detail < 0 ? -1 : 1, true);
+                        if (buftabs.options['mouse-scroll']) {
+                            window.gBrowser.tabContainer.advanceSelectedTab(
+                              event.detail < 0 ? -1 : 1, true);
+                        }
                         event.stopPropagation();
                     }, true);
 
@@ -49,7 +51,8 @@ let buftabs = {
     },
 
     get options() buftabs._options ||
-        {'elem': 'nthbi', 'buftabs': true, 'rnu': true, 'progress': true},
+        {'elem': 'nthbi', 'buftabs': true, 'rnu': true, 'progress': true,
+          'mouse-scroll': true},
     set options(options) {
         buftabs._options = {
             'elem' : 'elem' in options ? options['elem'] :
@@ -58,7 +61,9 @@ let buftabs = {
                 buftabs.options['buftabs'],
             'rnu': 'rnu' in options ? options['rnu'] : buftabs.options['rnu'],
             'progress': 'progress' in options ? options['progress'] :
-                buftabs.options['progress']
+                buftabs.options['progress'],
+            'mouse-scroll': 'mouse-scroll' in options ? options['mouse-scroll'] :
+                buftabs.options['mouse-scroll']
         };
         if (buftabs.fullLoad) // window has fully loaded
             buftabs.init();
@@ -517,6 +522,18 @@ group.options.add(['buftabs', 'bt'],
         {
             setter: function(value) {
                 buftabs.options = {'buftabs' : value};
+                return value;
+            }
+        }
+);
+
+group.options.add(['buftabs-mouse-scroll', 'btms'],
+        'Use mousewheel for moving between tabs',
+        'boolean',
+        true,
+        {
+            setter: function(value) {
+                buftabs.options = {'mouse-scroll': value};
                 return value;
             }
         }
